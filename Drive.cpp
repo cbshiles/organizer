@@ -1,32 +1,42 @@
 #include <stdio.h>
+//#include <string>
+#include <vector>
 
-virtual struct Goal {
-  String title;
+#include "Date.h"
+
+
+
+struct Goal {
+  string title;
+
   virtual string display(){
-    printf("%s\n", title);
+    return title+"/n";
   }
+  
   void remove();
   // ??? check(); //checks if anything is due today
 };
 
-struct ComplexGoal extends Goal{
+struct ComplexGoal : public Goal{
 
   string description;
-  Goal[] parts;
+  vector<Goal> parts;
   
 };
 
-struct DefiniteGoal extends ComplexGoal{
+struct DefiniteGoal : public ComplexGoal{
 
   Date endPoint;
 
   //??? complete(); //calls delete at end
 
-  virtual void display(){
-    printf("%s\n%s\n%s", title, description, endPoint);
-    for (Goal p in parts){
-      printf("\n\t"); p.display();
+  virtual string display(){ //# needs to be re written
+    string s = title+"\n"+description+"\n"+endPoint.tos();
+
+    for (unsigned i=0; i < parts.size(); i++) {
+      s += "\n\t"+parts[i].display();
     }
+    return s;
   }
 
   // virtual ??? check(){
@@ -38,19 +48,35 @@ struct DefiniteGoal extends ComplexGoal{
   
 };
 
-struct IndefiniteGoal extends ComplexGoal{
-  virtual void display(){
-    printf("%s\n%s", title, description);
-    for (Goal p in parts){
-      printf("\n\t"); p.display();
+struct IndefiniteGoal : public ComplexGoal{
+  virtual string display(){
+    string s = title+"\n"+description;
+
+    for (unsigned i=0; i < parts.size(); i++) {
+      s += "\n\t"+parts[i].display();
     }
+    return s;
   }
 
   //check()  ... its always relevant, also need tocheck parts
 
 };
 
+void dateTest(){
+ UnitTest ut = UnitTest();
+
+ Date tday = Date();
+ Date yday = Date(2016, 7, 10);
+ Date tmrw = Date(2016, 7, 12);
+ 
+ test(tday.diff(&yday) == 1);
+ test(yday.diff(&tmrw) == -2);
+ test(tday.diff(&tmrw) == -1);
+ ut.finish();
+ 
+}
+
 int main(){
-  printf("pook\n");
+  dateTest();
   return 0;
 }
